@@ -151,7 +151,14 @@ namespace HMACAuthentication.WebApi.Filters
 
             var serverTotalSeconds = Convert.ToUInt64(currentTs.TotalSeconds);
             var requestTotalSeconds = Convert.ToUInt64(requestTimeStamp);
-
+            
+            //here need additional check for requestTotalSeconds variable
+            //for example if requestTotalSeconds more on one second(because request host has different time),
+            //result of statement serverTotalSeconds - requestTotalSeconds
+            //will be very big value and not negative as expected so all request will treated as reply attack and rejected
+            //check code in comment for this file.
+            //suggestion is - convert to signed integer, so even if request local time will be far away from server time it will be
+            //still processed
             if ((serverTotalSeconds - requestTotalSeconds) > requestMaxAgeInSeconds)
             {
                 return true;
